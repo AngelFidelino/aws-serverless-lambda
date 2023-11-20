@@ -1,0 +1,26 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: An AWS Lambda application that calls the Lambda API.
+Resources:
+  Function:
+    Type: AWS::Serverless::Function # More info about Function Resource: https://github.com/awslabs/serverless-application-model/blob/master/versions/2016-10-31.md#awsserverlessfunction
+    Properties:
+      CodeUri: .
+      Handler: org.example.FunctionHandler
+      Runtime: java11
+      Timeout: 20 #default of 3 seconds
+      MemorySize: 512
+      Policies:
+        - SSMParameterReadPolicy:
+            ParameterName: java-app/dev/greeting-json
+      Environment:
+        Variables:
+          MAIN_CLASS: org.example.Application
+          FUNCTION_NAME: helloFunction
+      Events:
+        HelloWorld:
+          Type: Api
+          Properties:
+            Path: "/hello" #/{proxy+}
+            Method: GET #ANY
+
